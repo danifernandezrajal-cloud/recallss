@@ -59,6 +59,13 @@ export default function HomePage() {
           </div>
         )}
 
+        <Link href="/random">
+          <div className="border border-accent rounded-xl p-4 text-center">
+            <div className="text-accent font-bold text-sm tracking-widest">SORPRÉNDEME →</div>
+            <div className="text-subtle text-xs mt-1">Repasa una entrada aleatoria</div>
+          </div>
+        </Link>
+
         <div className="bg-surface border border-border rounded-xl p-4">
           <div className="text-[10px] tracking-widest text-subtle mb-3">BIBLIOTECA</div>
           <div className="text-2xl font-extrabold text-white">{total} <span className="text-sm font-normal text-subtle">entradas guardadas</span></div>
