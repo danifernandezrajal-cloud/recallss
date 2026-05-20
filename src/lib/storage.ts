@@ -92,6 +92,24 @@ export function rateEntry(id: string, rating: Rating): void {
   saveStore(store)
 }
 
+export function exportStore(): void {
+  const store = getStore()
+  const json = JSON.stringify(store, null, 2)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `recall-backup-${new Date().toISOString().split('T')[0]}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+export function importStore(json: string): void {
+  const parsed = JSON.parse(json) as Store
+  if (!parsed.entries || !parsed.categories) throw new Error('Archivo inválido')
+  saveStore(parsed)
+}
+
 export function completeReviewSession(): void {
   const store = getStore()
   const today = new Date().toISOString().split('T')[0]

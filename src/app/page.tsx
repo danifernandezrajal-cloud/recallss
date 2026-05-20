@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getStore, getDueToday } from '@/lib/storage'
+import { getStore, getDueToday, exportStore, importStore } from '@/lib/storage'
 import { Entry } from '@/lib/types'
 
 export default function HomePage() {
@@ -12,6 +12,20 @@ export default function HomePage() {
   const [streak, setStreak] = useState(0)
   const [total, setTotal] = useState(0)
   const [mounted, setMounted] = useState(false)
+  function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        importStore(reader.result as string)
+        window.location.reload()
+      } catch {
+        alert('El archivo no es válido')
+      }
+    }
+    reader.readAsText(file)
+  }
 
   useEffect(() => {
     const store = getStore()
@@ -69,6 +83,19 @@ export default function HomePage() {
         <div className="bg-surface border border-border rounded-xl p-4">
           <div className="text-[10px] tracking-widest text-subtle mb-3">BIBLIOTECA</div>
           <div className="text-2xl font-extrabold text-white">{total} <span className="text-sm font-normal text-subtle">entradas guardadas</span></div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={exportStore}
+            className="flex-1 border border-border rounded-xl py-3 text-[10px] tracking-widest text-subtle"
+          >
+            ↓ EXPORTAR
+          </button>
+          <label className="flex-1 border border-border rounded-xl py-3 text-[10px] tracking-widest text-subtle text-center cursor-pointer">
+            ↑ IMPORTAR
+            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+          </label>
         </div>
       </div>
     </div>
