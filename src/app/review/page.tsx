@@ -72,7 +72,7 @@ export default function ReviewPage() {
               ].filter(f => f.value).map(({ label, value }) => (
                 <div key={label}>
                   <div className="text-[8px] tracking-widest text-subtle mb-0.5">{label}</div>
-                  <div className="text-white text-xs">{value}</div>
+                  <div className="text-white text-xs whitespace-pre-wrap">{value}</div>
                 </div>
               ))}
             </div>

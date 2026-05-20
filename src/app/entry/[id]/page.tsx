@@ -4,8 +4,8 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { getStore, updateEntry, deleteEntry } from '@/lib/storage'
-import { Entry } from '@/lib/types'
+import { getStore, updateEntry, deleteEntry, getCategories } from '@/lib/storage'
+import { Entry, Category } from '@/lib/types'
 
 export default function EntryDetailPage() {
   const params = useParams()
@@ -17,6 +17,8 @@ export default function EntryDetailPage() {
   const [source, setSource] = useState('')
   const [connects, setConnects] = useState('')
   const [application, setApplication] = useState('')
+  const [category, setCategory] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
     const store = getStore()
@@ -28,7 +30,9 @@ export default function EntryDetailPage() {
       setSource(found.source || '')
       setConnects(found.connects || '')
       setApplication(found.application || '')
+      setCategory(found.category)
     }
+    setCategories(getCategories())
   }, [params.id])
 
   function handleSave() {
@@ -39,8 +43,9 @@ export default function EntryDetailPage() {
       source: source.trim() || undefined,
       connects: connects.trim() || undefined,
       application: application.trim() || undefined,
+      category,
     })
-    setEntry({ ...entry, title, why, source: source || undefined, connects: connects || undefined, application: application || undefined })
+    setEntry({ ...entry, title, why, source: source || undefined, connects: connects || undefined, application: application || undefined, category })
     setEditing(false)
   }
 
@@ -91,6 +96,18 @@ export default function EntryDetailPage() {
                 />
               </div>
             ))}
+            <div>
+              <label className="text-[9px] tracking-widest text-subtle block mb-1">CATEGORÍA</label>
+              <select
+                value={category}
+                onChange={e => setCategory(e.target.value)}
+                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-accent"
+              >
+                {categories.map(c => (
+                  <option key={c.id} value={c.name}>{c.emoji} {c.name}</option>
+                ))}
+              </select>
+            </div>
             <button onClick={handleSave} className="w-full bg-accent text-white font-bold py-4 rounded-xl text-sm tracking-widest">
               GUARDAR CAMBIOS
             </button>
@@ -106,7 +123,7 @@ export default function EntryDetailPage() {
             ].filter(f => f.value).map(({ label, value }) => (
               <div key={label} className="bg-surface border border-border rounded-xl p-4">
                 <div className="text-[9px] tracking-widest text-subtle mb-2">{label.toUpperCase()}</div>
-                <div className="text-white text-sm">{value}</div>
+                <div className="text-white text-sm whitespace-pre-wrap">{value}</div>
               </div>
             ))}
             <div className="text-[10px] text-subtle text-center pt-2">
